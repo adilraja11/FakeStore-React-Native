@@ -9,7 +9,7 @@ export default function HomeScreen() {
         alignItems: "center",
       }}
     >
-      <Text>This is Home Screen</Text>
+      <Text>This is Profile Page</Text>
     </View>
   );
 }
