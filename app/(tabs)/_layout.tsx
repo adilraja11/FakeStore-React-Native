@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
@@ -13,7 +13,16 @@ export default function TabLayout() {
         options={{
           headerTitle: 'Awesome Store',
           tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="home-outline" color={color} />
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="home-outline" color={color} />,
+          headerRight: () => (
+            <Ionicons 
+              name='cart-outline'
+              size={24}
+              color='#000'
+              style={{ marginRight: 24 }}
+              onPress={() => {router.push('/cart')}}
+            />
+          )
         }}
       />
       <Tabs.Screen
