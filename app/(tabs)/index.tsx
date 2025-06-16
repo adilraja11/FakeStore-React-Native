@@ -1,8 +1,9 @@
 // app/(tabs)/index.tsx
 
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Platform,
   ScrollView,
@@ -14,25 +15,18 @@ import {
 } from 'react-native';
 import CardProduct from '../components/card-product';
 
-const PRODUCTS = [
-  {
-    id: 1,
-    name: 'Fjallraven Backpack',
-    price: 109.95,
-    rating: 3.9,
-    reviews: 120,
-    image: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-  },
-  {
-    id: 2,
-    name: "Men's Casual T-Shirt",
-    price: 22.3,
-    rating: 4.1,
-    reviews: 259,
-    image: 'https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg',
-  },
-  /* …dst… */
-];
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number
+  }
+}
 
 function showToast(msg: string) {
   if (Platform.OS === 'android') {
@@ -43,6 +37,23 @@ function showToast(msg: string) {
 }
 
 export default function HomeScreen() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products')
+      .then((response) => response.json())
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log('Failed to fetch products: ', error)
+        showToast('Failed to load products');
+        setLoading(false);
+      })
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Banner */}
@@ -68,11 +79,22 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>All Products</Text>
 
       {/* Grid Produk */}
-      <View style={styles.grid}>
-        {PRODUCTS.map((item) => (
-          <CardProduct item={item} key={item.id} />
-        ))}
-      </View>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={'#4c6ef5'} />
+      ) : (
+        <View style={styles.grid}>
+          {products.map((item) => (
+            <CardProduct
+              id={item.id}
+              image={item.image}
+              title={item.title}
+              price={item.price}
+              rating={item.rating}
+              key={item.id}
+            />
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 }

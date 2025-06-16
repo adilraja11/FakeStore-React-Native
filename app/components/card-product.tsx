@@ -1,43 +1,53 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import {
   Image,
   StyleSheet,
   Text,
-  View,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 export interface CardProductProps {
-    item: {
-        id: number;
-        image: string;
-        name: string;
-        price: number;
-        rating: number;
-        reviews: number;
-    };
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  rating: {
+    rate: number;
+    count: number
+  }
 }
 
-export default function CardProduct({ item }: CardProductProps) {
+export default function CardProduct({
+  id,
+  title,
+  price,
+  image,
+  rating,
+}: CardProductProps) {
+  const router = useRouter();
+
   return (
-    <>
-        <View key={item.id} style={styles.card}>
-            <Image
-                source={{ uri: item.image }}
-                style={styles.cardImg}
-                resizeMode="cover"
-            />
-            <Text style={styles.cardName} numberOfLines={1}>
-                {item.name}
-            </Text>
-            <Text style={styles.cardPrice}>${item.price.toFixed(2)}</Text>
-            <View style={styles.cardRating}>
-                <Ionicons name="star" size={12} color="#FFD700" />
-                <Text style={styles.cardRatingText}>
-                {item.rating} ({item.reviews})
-                </Text>
-            </View>
-            </View>
-    </>
+    <TouchableOpacity onPress={() => router.push(`/product/${id}`)} style={styles.card}>
+      <View>
+        <Image
+          source={{ uri: image }}
+          style={styles.cardImg}
+          resizeMode="cover"
+        />
+        <Text style={styles.cardName} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={styles.cardPrice}>${price.toFixed(2)}</Text>
+        <View style={styles.cardRating}>
+          <Ionicons name="star" size={12} color="#FFD700" />
+          <Text style={styles.cardRatingText}>
+            {rating.rate} ({rating.count})
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   )
 }
 
