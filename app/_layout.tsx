@@ -6,7 +6,7 @@ export default function RootLayout() {
     <>
       <Stack>
         <Stack.Screen name="(tabs)" options={{headerShown: false}} />
-        {/* <Stack.Screen name="(home)" /> */}
+        <Stack.Screen name="product" options={{headerShown: true, headerTitle: 'Detail Produk', headerBackTitle: 'Back', presentation: 'card'}} />
       </Stack>
       <StatusBar barStyle={"light-content"} />
     </>

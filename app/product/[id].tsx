@@ -11,7 +11,4 @@ export default function ProductDetail() {
   )
 }
 
-export const screenOptions = {
-  title: 'Product Detail',
-};
 
