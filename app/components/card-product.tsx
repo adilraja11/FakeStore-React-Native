@@ -29,7 +29,16 @@ export default function CardProduct({
   const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => router.push(`/product/${id}`)} style={styles.card}>
+    <TouchableOpacity 
+      onPress={() => router.push({
+        pathname: '/product/[id]',
+        params: {
+          id: id.toString(),
+          rate: rating.rate,
+          count: rating.count
+        }
+      })} 
+      style={styles.card}>
       <View>
         <Image
           source={{ uri: image }}
