@@ -1,7 +1,7 @@
 // app/(tabs)/index.tsx
 
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -39,6 +39,9 @@ function showToast(msg: string) {
 export default function HomeScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sectionPosition, setSectionPosition] = useState(0);
+
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     fetch('https://fakestoreapi.com/products')
@@ -54,8 +57,20 @@ export default function HomeScreen() {
       })
   }, []);
 
+  function scrollToSection() {
+    scrollRef.current?.scrollTo({
+      y: sectionPosition,
+      animated: true
+    });
+  }
+
+  function handleSectionLayout(event: any) {
+    const { y } = event.nativeEvent.layout;
+    setSectionPosition(y);
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} ref={scrollRef}>
       {/* Banner */}
       <LinearGradient
         colors={['#4c6ef5', '#5c7cfa']}
@@ -69,14 +84,16 @@ export default function HomeScreen() {
         </View>
         <TouchableOpacity
           style={styles.bannerBtn}
-          onPress={() => showToast('Shop Now diklik!')}
+          onPress={scrollToSection}
         >
           <Text style={styles.bannerBtnText}>Shop Now</Text>
         </TouchableOpacity>
       </LinearGradient>
 
       {/* Section Title */}
-      <Text style={styles.sectionTitle}>All Products</Text>
+      <View onLayout={handleSectionLayout}>
+        <Text style={styles.sectionTitle}>All Products</Text>
+      </View>
 
       {/* Grid Produk */}
       {loading ? (
@@ -109,7 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderRadius: 12,
-    marginBottom: 24,
   },
   bannerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
   bannerSub: { color: '#fff', marginTop: 4 },
@@ -127,6 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    marginTop: 24,
     marginBottom: 12,
   },
 

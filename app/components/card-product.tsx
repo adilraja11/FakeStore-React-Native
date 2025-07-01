@@ -37,14 +37,15 @@ export default function CardProduct({
           rate: rating.rate,
           count: rating.count
         }
-      })} 
-      style={styles.card}>
-      <View>
-        <Image
-          source={{ uri: image }}
-          style={styles.cardImg}
-          resizeMode="cover"
-        />
+      })} style={styles.card}>
+        <View>
+          <Image
+            source={{ uri: image }}
+            style={styles.cardImg}
+            resizeMode="cover"
+          />
+        </View>
+      <View style={{ padding: 12 }}>
         <Text style={styles.cardName} numberOfLines={1}>
           {title}
         </Text>
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 12,
         marginBottom: 16,
-        padding: 12,
     
         // shadow (iOS)
         shadowColor: '#000',

@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
+  Alert,
   Image,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View
 } from "react-native";
@@ -23,21 +26,19 @@ interface CartItem {
 export default function CartScreen() {
   const { cartItems, updateQuantity, removeItem } = useCart();
 
-  // Function untuk menentukan warna badge berdasarkan category
-  const getCategoryBadgeStyle = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "men's clothing":
-        return { backgroundColor: '#DBEAFE', color: '#1D4ED8' };
-      case 'jewelery':
-        return { backgroundColor: '#FEF3C7', color: '#D97706' };
-      case 'electronics':
-        return { backgroundColor: '#DCFCE7', color: '#16A34A' };
-      case "women's clothing":
-        return { backgroundColor: '#FCE7F3', color: '#BE185D' };
-      default:
-        return { backgroundColor: '#F3F4F6', color: '#374151' };
-    }
+  const formatCategoryText = (category: string) => {
+    return category.charAt(0).toUpperCase() + category.slice(1);
   };
+
+  function handleToCheckout() {
+    if (cartItems.length === 0) return;
+
+    if (Platform.OS === 'android') {
+      ToastAndroid.show('Lets wrap this up! 📦', ToastAndroid.SHORT);
+    } else {
+      Alert.alert('Success', 'Lets wrap this up! 📦');
+    }
+  }
 
   // Calculate subtotal
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -56,7 +57,7 @@ export default function CartScreen() {
               <Text style={{
                 marginBottom: 12,
                 color: '#666'
-              }}>{item.category}</Text>
+              }}>{formatCategoryText(item?.category || '')}</Text>
               
               <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
             </View>
@@ -104,7 +105,7 @@ export default function CartScreen() {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.checkoutButton}>
+        <TouchableOpacity style={styles.checkoutButton} onPress={handleToCheckout}>
           <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
         </TouchableOpacity>
       </View>
