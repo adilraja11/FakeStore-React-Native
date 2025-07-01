@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { useCart } from '../context/CartContext';
 
 interface ProductDetail {
   id: number,
@@ -16,6 +17,7 @@ export default function ProductDetail() {
     const { id, rate, count } = useLocalSearchParams();
     const [productDetail, setProductDetail] = useState<ProductDetail>();
     const [loading, setLoading] = useState(true);
+    const { addToCart } = useCart();
 
     useEffect(() => {
       fetch(`https://fakestoreapi.com/products/${id}`)
@@ -61,6 +63,27 @@ export default function ProductDetail() {
       return stars;
     };
 
+    const showMessage = (message: string) => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+      } else {
+        Alert.alert('Success', message)
+      }
+    }
+
+    function handleAddToCart() {
+      if (!productDetail) return;
+      addToCart({
+        id: productDetail.id,
+        title: productDetail.title,
+        category: productDetail.category,
+        image: productDetail.image,
+        price: productDetail.price,
+        quantity: 1
+      });
+      showMessage('Added to Cart!');
+    }
+
     // Function untuk menentukan warna badge berdasarkan category
     const getCategoryBadgeStyle = (category: string) => {
       switch (category) {
@@ -83,53 +106,57 @@ export default function ProductDetail() {
     };
 
   return (
-    <ScrollView>
+    <>
         {loading ? (
           <ActivityIndicator size={'large'} color={'#4c6ef5'} />
         ) : (
-          <View>
-            <Image
-              source={{ uri: productDetail?.image }}
-              style={styles.detailImg}
-              resizeMode='contain'
-            />
-            <View style={styles.container}>
-              {/* Category Badge */}
-              <View style={[
-                styles.categoryBadge, 
-                getCategoryBadgeStyle(productDetail?.category || '')
-              ]}>
-                <Text style={[
-                  styles.categoryText,
-                  { color: getCategoryBadgeStyle(productDetail?.category || '').color }
+          <View style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1 }}>
+              <Image
+                source={{ uri: productDetail?.image }}
+                style={styles.detailImg}
+                resizeMode='contain'
+              />
+              <View style={styles.container}>
+                {/* Category Badge */}
+                <View style={[
+                  styles.categoryBadge, 
+                  getCategoryBadgeStyle(productDetail?.category || '')
                 ]}>
-                  {formatCategoryText(productDetail?.category || '')}
-                </Text>
-              </View>
-              <Text style={styles.detailTitle}>{productDetail?.title}</Text>
-              
-              {/* Star Rating */}
-              <View style={styles.ratingContainer}>
-                <View style={styles.starsContainer}>
-                  {renderStars(parseFloat(rate as string) || 0)}
+                  <Text style={[
+                    styles.categoryText,
+                    { color: getCategoryBadgeStyle(productDetail?.category || '').color }
+                  ]}>
+                    {formatCategoryText(productDetail?.category || '')}
+                  </Text>
                 </View>
-                <Text style={styles.ratingText}>
-                  {rate} ({count} Reviews)
-                </Text>
+                <Text style={styles.detailTitle}>{productDetail?.title}</Text>
+                
+                {/* Star Rating */}
+                <View style={styles.ratingContainer}>
+                  <View style={styles.starsContainer}>
+                    {renderStars(parseFloat(rate as string) || 0)}
+                  </View>
+                  <Text style={styles.ratingText}>
+                    {rate} ({count} Reviews)
+                  </Text>
+                </View>
+
+                <Text style={styles.detailPrice}>${productDetail?.price}</Text>
+
+                <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 12 }}>Description</Text>
+                <Text style={{ color: '#666', fontSize: 16 }}>{productDetail?.description}</Text>
               </View>
+            </ScrollView>
 
-              <Text style={styles.detailPrice}>${productDetail?.price}</Text>
-
-              <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 12 }}>Description</Text>
-              <Text style={{ color: '#666', fontSize: 16 }}>{productDetail?.description}</Text>
+            <View>
+              <TouchableOpacity style={styles.addToCartBtn} onPress={handleAddToCart}>
+                <Text style={styles.addToCartBtnText}>Add to Cart</Text>
+              </TouchableOpacity>
             </View>
-
-            <TouchableOpacity style={styles.addToCartBtn}>
-              <Text style={styles.addToCartBtnText}>Add to Cart</Text>
-            </TouchableOpacity>
           </View>
         )}
-    </ScrollView>
+    </>
   )
 }
 
@@ -185,7 +212,8 @@ const styles = StyleSheet.create({
   },
 
   addToCartBtn: {
-    marginVertical: 20,
+    marginTop: 20,
+    marginBottom: 24,
     marginHorizontal: 16,
     display: 'flex', 
     justifyContent: 'center',

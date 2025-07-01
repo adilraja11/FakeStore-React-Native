@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Image,
   SafeAreaView,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useCart } from '../context/CartContext';
 
 interface CartItem {
   id: number;
@@ -20,25 +21,7 @@ interface CartItem {
 }
 
 export default function CartScreen() {
-  // Sample cart data - nanti bisa diganti dengan data dari state management
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      title: "Fjallraven Backpack",
-      category: "Electronics",
-      price: 109.95,
-      image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-      quantity: 1
-    },
-    {
-      id: 2,
-      title: "Men's Casual T-Shirt",
-      category: "Men's Clothing",
-      price: 22.30,
-      image: "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg",
-      quantity: 2
-    }
-  ]);
+  const { cartItems, updateQuantity, removeItem } = useCart();
 
   // Function untuk menentukan warna badge berdasarkan category
   const getCategoryBadgeStyle = (category: string) => {
@@ -56,24 +39,6 @@ export default function CartScreen() {
     }
   };
 
-  // Function untuk update quantity
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(prevItems =>
-      prevItems.map(item => {
-        if (item.id === id) {
-          const newQuantity = Math.max(1, item.quantity + change);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
-    );
-  };
-
-  // Function untuk remove item
-  const removeItem = (id: number) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
-  };
-
   // Calculate subtotal
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -86,7 +51,7 @@ export default function CartScreen() {
             <Image source={{ uri: item.image }} style={styles.itemImage} />
             
             <View style={styles.itemDetails}>
-              <Text style={styles.itemTitle}>{item.title}</Text>
+              <Text numberOfLines={2} style={styles.itemTitle}>{item.title}</Text>
               
               <Text style={{
                 marginBottom: 12,
