@@ -1,6 +1,7 @@
 import { useFonts } from "expo-font";
 import { router, Tabs } from "expo-router";
 import { Text, TouchableOpacity, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import CategoryIconSvg from "../../assets/images/ic-category.svg";
 import CartIconSvg from "../../assets/images/ic_cart.svg";
@@ -48,6 +49,7 @@ const ProfileIcon = ({ color, size }: { color: string; size?: number }) => (
 );
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
 
   const [fontsLoaded] = useFonts({
     Poppins_Regular: require("../../assets/fonts/poppins_regular.ttf"),
@@ -62,6 +64,14 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: 12,
         },
+        tabBarStyle: {
+          height: 60 + insets.bottom,
+          paddingTop: 10,
+          paddingBottom: insets.bottom,
+          backgroundColor: "#fff",
+          borderTopWidth: 0,
+          elevation: 0,
+        }
       }}
     >
       <Tabs.Screen
