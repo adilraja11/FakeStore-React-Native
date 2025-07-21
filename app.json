@@ -46,8 +46,18 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a15872e0-b0ae-4990-8fb1-22adec19ef72"
+        "projectId": "eab61888-8e23-4b45-99d3-ec8f722541d5"
       }
-    }
+    },
+    "owner": "kevin6765",
+    "assetBundlePatterns": ["**/*"],
+    "fonts": [
+      "./assets/fonts/poppins_regular.ttf",
+      "./assets/fonts/poppins_bold.ttf",
+      "./assets/fonts/poppins_light.ttf",
+      "./assets/fonts/poppins_medium.ttf",
+      "./assets/fonts/poppins_semi_bold.ttf",
+      "./assets/fonts/poppins_black.ttf"
+    ]
   }
 }
